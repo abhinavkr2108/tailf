@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logs</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <script>
+      let client = null;
+      let socket = new SockJS("/logs");
+      client = Stomp.over(socket);
+
+      client.connect({}, function (frame) {
+        console.log("Connected !!");
+
+        client.subscribe("/topic/log", function (data) {
+          print(JSON.parse(data.body));
+          console.log("Received message: " + data);
+        });
+      });
+
+      function print(message) {
+        let log = document.getElementById("logs");
+        let newLogs = document.createElement("p");
+        console.log("LOGS", log);
+
+        newLogs.appendChild(document.createTextNode(message.content));
+        log.appendChild(newLogs);
+        console.log("LOGS", newLogs);
+        console.log("MESSAGE", message);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>View Logs</h1>
+    <p id="logs"></p>
+  </body>
+</html>
